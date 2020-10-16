@@ -8,9 +8,11 @@ import java.util.List;
 
 public class Basket {
     private final List<Item> items;
+    private final List<Discount> discounts;
 
     public Basket() {
         this.items = new ArrayList<>();
+        this.discounts = new ArrayList<>();
     }
 
     public void add(final Item item) {
@@ -19,6 +21,14 @@ public class Basket {
 
     List<Item> items() {
         return Collections.unmodifiableList(items);
+    }
+
+    public void add(final Discount discount) {
+        this.discounts.add(discount);
+    }
+
+    List<Discount> discounts() {
+        return Collections.unmodifiableList(discounts);
     }
 
     public BigDecimal total() {
@@ -47,11 +57,23 @@ public class Basket {
          *  which provides that functionality.
          */
         private BigDecimal discounts() {
-            return BigDecimal.ZERO;
+            return new DiscountCalculator().calculate(items);
         }
 
         private BigDecimal calculate() {
             return subtotal().subtract(discounts());
+        }
+    }
+
+    private class DiscountCalculator {
+        private final List<Discount> discounts;
+
+        DiscountCalculator() {
+            this.discounts = discounts();
+        }
+
+        private BigDecimal calculate(List<Item> items) {
+            return BigDecimal.ZERO;
         }
     }
 }
