@@ -35,7 +35,8 @@ class DiscountedBasketTest {
                 twoItemsWithThreeForTwoDiscount(),
                 threeItemsWithThreeForTwoDiscount(),
                 fourItemsWithThreeForTwoDiscount(),
-                multipleItemsWithThreeForTwoDiscount()
+                multipleItemsWithThreeForTwoDiscount(),
+                multipleItemsWithMultipleDiscounts()
         );
     }
 
@@ -93,6 +94,12 @@ class DiscountedBasketTest {
                 Collections.singletonList(threeForTwo("milk")));
     }
 
+    private static Arguments multipleItemsWithMultipleDiscounts() {
+        return Arguments.of("multiple items, multiple discounts", "4.27",
+                Arrays.asList(aPintOfMilk(), aPackOfDigestives(), aPintOfMilk(), twoFiftyGramsOfAmericanSweets(), aPintOfMilk(), aPackOfDigestives(), aPintOfMilk()),
+                Arrays.asList(twoForOne("digestives"), threeForTwo("milk")));
+    }
+
     private static Arguments noItemsNoDiscounts() {
         return Arguments.of("no items", "0.00", Collections.emptyList(), Collections.emptyList());
     }
@@ -103,6 +110,14 @@ class DiscountedBasketTest {
 
     private static Item aPackOfDigestives() {
         return new Product("digestives", new BigDecimal("1.55")).oneOf();
+    }
+
+    private static WeighedProduct aKiloOfAmericanSweets() {
+        return new WeighedProduct("americanSweets", new BigDecimal("4.99"));
+    }
+
+    private static Item twoFiftyGramsOfAmericanSweets() {
+        return aKiloOfAmericanSweets().weighing(new BigDecimal(".25"));
     }
 
     private static Discount twoForOne(String productCode) { return new Discount(productCode, 2, new BigDecimal("0.5")); }
