@@ -31,7 +31,11 @@ class DiscountedBasketTest {
                 twoItemsWithTwoForOneDiscount(),
                 threeItemsWithTwoForOneDiscount(),
                 fourItemsWithTwoForOneDiscount(),
-                multipleItemsWithTwoForOneDiscount()
+                multipleItemsWithTwoForOneDiscount(),
+                twoItemsWithThreeForTwoDiscount(),
+                threeItemsWithThreeForTwoDiscount(),
+                fourItemsWithThreeForTwoDiscount(),
+                multipleItemsWithThreeForTwoDiscount()
         );
     }
 
@@ -65,6 +69,30 @@ class DiscountedBasketTest {
                 Collections.singletonList(twoForOne("milk")));
     }
 
+    private static Arguments twoItemsWithThreeForTwoDiscount() {
+        return Arguments.of("two items, 3-4-2 discount", "0.98",
+                Arrays.asList(aPintOfMilk(), aPintOfMilk()),
+                Collections.singletonList(threeForTwo("milk")));
+    }
+
+    private static Arguments threeItemsWithThreeForTwoDiscount() {
+        return Arguments.of("three items, 3-4-2 discount", "0.98",
+                Arrays.asList(aPintOfMilk(), aPintOfMilk(), aPintOfMilk()),
+                Collections.singletonList(threeForTwo("milk")));
+    }
+
+    private static Arguments fourItemsWithThreeForTwoDiscount() {
+        return Arguments.of("four items, 3-4-2 discount", "1.47",
+                Arrays.asList(aPintOfMilk(), aPintOfMilk(), aPintOfMilk(), aPintOfMilk()),
+                Collections.singletonList(threeForTwo("milk")));
+    }
+
+    private static Arguments multipleItemsWithThreeForTwoDiscount() {
+        return Arguments.of("multiple items, 3-4-2 discount", "3.02",
+                Arrays.asList(aPintOfMilk(), aPackOfDigestives(), aPintOfMilk(), aPintOfMilk(), aPintOfMilk()),
+                Collections.singletonList(threeForTwo("milk")));
+    }
+
     private static Arguments noItemsNoDiscounts() {
         return Arguments.of("no items", "0.00", Collections.emptyList(), Collections.emptyList());
     }
@@ -78,4 +106,6 @@ class DiscountedBasketTest {
     }
 
     private static Discount twoForOne(String productCode) { return new Discount(productCode, 2, new BigDecimal("0.5")); }
+
+    private static Discount threeForTwo(String productCode) { return new Discount(productCode, 3, new BigDecimal("0.33")); }
 }
