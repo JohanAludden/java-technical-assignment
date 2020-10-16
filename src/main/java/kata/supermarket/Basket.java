@@ -5,6 +5,7 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class Basket {
@@ -68,19 +69,32 @@ public class Basket {
 
         private BigDecimal calculate(List<Item> items) {
             return discounts.stream()
-                    .map(discount -> {
-                        List<Item> validItems = items.stream()
-                                .filter(item -> item.productCode().equals(discount.productCode()))
-                                .collect(Collectors.toList());
-                        if (!validItems.isEmpty() && validItems.size() >= discount.quantity()) {
-                            BigDecimal itemPrice = validItems.get(0).price();
-                            return new BigDecimal(validItems.size()).multiply(itemPrice).multiply(discount.percentageToDeduct());
-                        }
-                        return BigDecimal.ZERO;
-                    })
+                    .map(applyDiscount(items))
                     .reduce(BigDecimal::add)
                     .orElse(BigDecimal.ZERO)
                     .setScale(2, RoundingMode.HALF_UP);
+        }
+
+        private Function<Discount, BigDecimal> applyDiscount(List<Item> items) {
+            return discount -> {
+                List<Item> validItems = items.stream()
+                        .filter(item -> item.productCode().equals(discount.productCode()))
+                        .collect(Collectors.toList());
+                return calculateDiscountAmount(discount, validItems);
+            };
+        }
+
+        private BigDecimal calculateDiscountAmount(Discount discount, List<Item> validItems) {
+            if (isApplicable(discount, validItems)) {
+                BigDecimal itemPrice = validItems.get(0).price();
+                BigDecimal itemsToDiscount = new BigDecimal(validItems.size() - (validItems.size() % discount.quantity()));
+                return itemsToDiscount.multiply(itemPrice).multiply(discount.percentageToDeduct());
+            }
+            return BigDecimal.ZERO;
+        }
+
+        private boolean isApplicable(Discount discount, List<Item> validItems) {
+            return !validItems.isEmpty() && validItems.size() >= discount.quantity();
         }
     }
 }
