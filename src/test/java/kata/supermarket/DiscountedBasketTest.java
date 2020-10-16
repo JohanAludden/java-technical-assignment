@@ -27,13 +27,20 @@ class DiscountedBasketTest {
     static Stream<Arguments> basketProvidesDiscountedValue() {
         return Stream.of(
                 noItemsNoDiscounts(),
-                aSingleItemWithTwoForOneDiscount()
+                aSingleItemWithTwoForOneDiscount(),
+                twoItemsWithTwoForOneDiscount()
         );
     }
 
     private static Arguments aSingleItemWithTwoForOneDiscount() {
         return Arguments.of("a single item, 2-4-1 discount", "0.49",
                 Collections.singleton(aPintOfMilk()),
+                Collections.singletonList(twoForOne()));
+    }
+
+    private static Arguments twoItemsWithTwoForOneDiscount() {
+        return Arguments.of("two items, 2-4-1 discount", "0.49",
+                Arrays.asList(aPintOfMilk(), aPintOfMilk()),
                 Collections.singletonList(twoForOne()));
     }
 
